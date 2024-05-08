@@ -47,7 +47,7 @@ const Pagination: React.FC<PaginationProps> = ({
     onPageChange(currentPage + 1);
   };
   const onLast = () => {
-    lastPage && onPageChange(lastPage);
+    lastPage && onPageChange(lastPage as number);
   };
 
   return (
