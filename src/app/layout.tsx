@@ -1,8 +1,7 @@
 import "@/styles/globals.css";
-
 import { Inter } from "next/font/google";
-
 import { TRPCReactProvider } from "@/trpc/react";
+import Header from "@/app/_components/Header";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,9 +20,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <title>Turnover Fronted Submission - Vibhor Sharma</title>
       <body className={`font-sans ${inter.variable}`}>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        {/* <NotificationComponent /> */}
+        <div className="bg-white">
+          {/* <!-- ===== Page Wrapper Start ===== --> */}
+          <div className="flex h-screen overflow-hidden">
+            {/* <!-- ===== Content Area Start ===== --> */}
+            <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+              {/* <!-- ===== Header Start ===== --> */}
+
+              <Header />
+
+              {/* <!-- ===== Header End ===== --> */}
+
+              {/* <!-- ===== Main Content Start ===== --> */}
+              <main>
+                <div className="container mx-auto px-4 py-16">
+                  <TRPCReactProvider>{children}</TRPCReactProvider>
+                </div>
+              </main>
+              {/* <!-- ===== Main Content End ===== --> */}
+            </div>
+            {/* <!-- ===== Content Area End ===== --> */}
+          </div>
+          {/* <!-- ===== Page Wrapper End ===== --> */}
+        </div>
       </body>
     </html>
   );

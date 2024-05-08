@@ -6,11 +6,33 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-
+import jwt from "jsonwebtoken";
 import { db } from "@/server/db";
+// import type {
+//   NextApiResponse,
+//   NextApiRequest,
+//   CreateNextContextOptions,
+// } from "@trpc/server/adapters/next";
+import type { UserDataPayload } from "@/types";
+
+// type CreateContextOptions = {
+//   req: NextApiRequest;
+
+//   res: NextApiResponse;
+// };
+
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET ?? "";
+
+// const createInnerTRPCContext = (_opts: CreateContextOptions) => {
+//   return {
+//     db,
+//     req: _opts.req,
+//     res: _opts.res,
+//   };
+// };
 
 /**
  * 1. CONTEXT
@@ -30,6 +52,13 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
     ...opts,
   };
 };
+// export const createTRPCContext = async (req: Request, resHeaders: Headers) => {
+//   return {
+//     db,
+//     req,
+//     resHeaders,
+//   };
+// };
 
 /**
  * 2. INITIALIZATION
@@ -50,6 +79,45 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
       },
     };
   },
+});
+
+const isAuth = t.middleware(async ({ ctx, next }) => {
+  const authToken = ctx.headers.get("authorization");
+
+  if (typeof authToken !== "string") {
+    throw new TRPCError({ code: "PARSE_ERROR" });
+  }
+
+  const [tokenType, accessToken] = authToken?.split(" ");
+
+  if (
+    typeof tokenType !== "string" ||
+    typeof accessToken !== "string" ||
+    tokenType !== "Bearer"
+  ) {
+    throw new TRPCError({ code: "PARSE_ERROR" });
+  }
+
+  if (!accessToken) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+  try {
+    const payload = jwt.verify(
+      accessToken,
+      ACCESS_TOKEN_SECRET,
+    ) as UserDataPayload;
+
+    if (payload) {
+      return next({
+        ctx: {
+          userId: payload.userId,
+        },
+      });
+    }
+  } catch (error) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  return next();
 });
 
 /**
@@ -81,3 +149,4 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+export const privateProcedure = t.procedure.use(isAuth);
