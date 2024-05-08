@@ -1,6 +1,8 @@
 import React from "react";
 import { usePagination, DOTS } from "@/hooks/usePagination";
 import {
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
   MdOutlineKeyboardArrowLeft,
   MdOutlineKeyboardArrowRight,
 } from "react-icons/md";
@@ -33,19 +35,31 @@ const Pagination: React.FC<PaginationProps> = ({
     return null;
   }
 
-  const onNext = () => {
-    onPageChange(currentPage + 1);
-  };
+  const lastPage = paginationRange[paginationRange.length - 1];
 
+  const onFirst = () => {
+    onPageChange(1);
+  };
   const onPrevious = () => {
     onPageChange(currentPage - 1);
   };
+  const onNext = () => {
+    onPageChange(currentPage + 1);
+  };
+  const onLast = () => {
+    lastPage && onPageChange(lastPage);
+  };
 
-  const lastPage = paginationRange[paginationRange.length - 1];
   return (
     <ul className={`flex items-center gap-2 ${className}`}>
       <li
-        className={`cursor-pointer text-xl ${currentPage === 1 ? "text-gray-300" : "text-black"}`}
+        className={`text-xl ${currentPage === 1 ? "cursor-not-allowed text-gray-300" : "cursor-pointer text-black"}`}
+        onClick={onFirst}
+      >
+        <MdKeyboardDoubleArrowLeft size={20} />
+      </li>
+      <li
+        className={`text-xl ${currentPage === 1 ? "cursor-not-allowed text-gray-300" : "cursor-pointer text-black"}`}
         onClick={onPrevious}
       >
         <MdOutlineKeyboardArrowLeft size={20} />
@@ -70,10 +84,16 @@ const Pagination: React.FC<PaginationProps> = ({
         );
       })}
       <li
-        className={`cursor-pointer text-xl ${currentPage === lastPage ? "text-gray-300" : "text-black"}`}
+        className={`text-xl ${currentPage === lastPage ? "cursor-not-allowed text-gray-300" : "cursor-pointer text-black"}`}
         onClick={onNext}
       >
         <MdOutlineKeyboardArrowRight size={20} />
+      </li>
+      <li
+        className={`text-xl ${currentPage === lastPage ? "cursor-not-allowed text-gray-300" : "cursor-pointer text-black"}`}
+        onClick={onLast}
+      >
+        <MdKeyboardDoubleArrowRight size={20} />
       </li>
     </ul>
   );
