@@ -19,3 +19,8 @@ export interface CookieOptions {
   secure?: boolean;
   sameSite?: "Strict" | "Lax" | "None";
 }
+
+export interface Category {
+  id: string;
+  name: string;
+}

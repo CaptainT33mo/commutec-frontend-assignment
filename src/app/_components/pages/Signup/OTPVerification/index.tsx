@@ -22,8 +22,10 @@ export default function OTPVerification({
   const [errorText, setErrorText] = useState("");
   const verifyUser = api.auth.verifyOTP.useMutation({
     onSuccess: (resp) => {
-      // updateToken(resp?.token);
-      if (resp.success) router.push(AppRoutes.DASHBOARD);
+      if (resp.success) {
+        resp.data?.accessToken && updateToken(resp.data?.accessToken);
+        router.push(AppRoutes.DASHBOARD);
+      }
     },
   });
 
@@ -44,12 +46,7 @@ export default function OTPVerification({
           Enter the 8 digit code you have received on {maskEmail(email)}
         </p>
       </div>
-      <FieldWrapper
-        label="Code"
-        required
-        infoText="For demo purpose use any 8 digit number to sign up"
-        errorText={errorText}
-      >
+      <FieldWrapper label="Code" required errorText={errorText}>
         <OtpInput
           value={otp}
           onChange={setOtp}

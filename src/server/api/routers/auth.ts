@@ -21,21 +21,11 @@ export const authRouter = createTRPCRouter({
         const { name, email, password } = input;
         const passwordHash = await hashPassword(password);
         let saveUserDataResponse: UserDetails | Record<string, never> = {};
-        console.log(
-          "%csrc/server/api/routers/auth.ts:22 input",
-          "color: #007acc;",
-          input,
-        );
         const user = await ctx.db.user.findUnique({
           where: {
             email,
           },
         });
-        console.log(
-          "%csrc/server/api/routers/auth.ts:32 user",
-          "color: red;",
-          user,
-        );
         if (!user?.id) {
           saveUserDataResponse = await ctx.db.user.create({
             data: {
@@ -46,12 +36,8 @@ export const authRouter = createTRPCRouter({
             },
           });
           if (!saveUserDataResponse) {
-            console.log(
-              "%csrc/server/api/routers/auth.ts:39 inside the if check",
-              "color: pink;",
-            );
             throw new TRPCError({
-              message: "error creating the user",
+              message: "Error creating the user",
               code: "BAD_REQUEST",
             });
           }
@@ -62,21 +48,11 @@ export const authRouter = createTRPCRouter({
           otp,
         });
         if (!mailResponseForOtpVerification) {
-          console.log(
-            "%csrc/server/api/routers/auth.ts:39 inside the if check of mail",
-            "color: pink;",
-          );
           throw new TRPCError({
-            message: "unable to send otp for email verification",
+            message: "Unable to send otp for email verification",
             code: "BAD_REQUEST",
           });
-          // return new NextResponse()
         }
-        console.log(
-          "%csrc/server/api/routers/auth.ts:75 saveUserDataResponse",
-          "color: #007acc;",
-          saveUserDataResponse,
-        );
         const currentDateTime = new Date();
         const expiryDateTime = new Date(currentDateTime.getTime() + 10 * 60000);
         const saveUserOtp = await ctx.db.otpVerification.create({
@@ -88,14 +64,14 @@ export const authRouter = createTRPCRouter({
         });
         if (!saveUserOtp) {
           throw new TRPCError({
-            message: "error saving the otp",
+            message: "Error saving OTP",
             code: "BAD_REQUEST",
           });
         }
 
         return {
           success: true,
-          message: "successfully created user",
+          message: "User created successfully",
           data: saveUserDataResponse || user,
         };
       } catch (error) {

@@ -8,6 +8,7 @@ import { useState } from "react";
 import SuperJSON from "superjson";
 
 import { type AppRouter } from "@/server/api/root";
+import { useStore } from "@/store/zustand";
 
 const createQueryClient = () => new QueryClient();
 
@@ -39,6 +40,7 @@ export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
+  const { token } = useStore();
 
   const [trpcClient] = useState(() =>
     api.createClient({
@@ -54,11 +56,12 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
           headers: () => {
             const headers = new Headers();
             headers.set("x-trpc-source", "nextjs-react");
+            headers.set("Authorization", `Bearer ${token}`);
             return headers;
           },
         }),
       ],
-    })
+    }),
   );
 
   return (

@@ -83,6 +83,11 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 
 const isAuth = t.middleware(async ({ ctx, next }) => {
   const authToken = ctx.headers.get("authorization");
+  console.log(
+    "%csrc/server/api/trpc.ts:86 ctx.headers",
+    "color: #007acc;",
+    ctx.headers,
+  );
 
   if (typeof authToken !== "string") {
     throw new TRPCError({ code: "PARSE_ERROR" });
