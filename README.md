@@ -2,28 +2,29 @@
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
-## What's next? How do I make an app with this?
+## Development setup?
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+Add your local or remote postgres database URL in the `.env` file. See `.env.sample` file for URL pattern.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+In `prisma.schema` file change the existing code of the `datasource db` with the below code. Make sure you have added `DATABASE_URL` in your `.env` file.
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+```
+datasource db {
+  provider  = "postgresql"
+  url      = env("DATABASE_URL")
+}
+```
 
-## Learn More
+Install the packages using `yarn install`
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+Make sure your local or remote instance of the database is running before running the following commands
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+```
+yarn db:push
+```
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+To see if the database is created with the supporting tables run `yarn db:studio`.
 
-## How do I deploy this?
+To populate the DB with the categories data run `yarn db:seed`.
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+After all the commands executed successfully then run `yarn dev` to start the development server.
