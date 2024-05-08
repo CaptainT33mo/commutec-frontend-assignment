@@ -28,7 +28,8 @@ async function seedCategories() {
       console.log("Data already exist");
     }
     const modifiedInterests = interests.map((o) => {
-      return { id: o.interestId, name: o.interestName };
+      const data = { id: o.interestId, name: o.interestName };
+      return data;
     });
     await prisma.category.createMany({
       data: modifiedInterests,
