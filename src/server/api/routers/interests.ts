@@ -15,7 +15,7 @@ export const interestsRouter = createTRPCRouter({
         const { interestId } = input;
         const response = await ctx.db.userInterest.create({
           data: {
-            userId,
+            userId: String(userId),
             interestId,
           },
         });
@@ -42,7 +42,7 @@ export const interestsRouter = createTRPCRouter({
         const { userInterestId } = input;
         const response = await ctx.db.userInterest.delete({
           where: {
-            userId,
+            userId: String(userId),
             id: userInterestId,
           },
         });
@@ -84,7 +84,7 @@ export const interestsRouter = createTRPCRouter({
     try {
       const { userId } = ctx;
       const response = await ctx.db.userInterest.findMany({
-        where: { userId },
+        where: { userId: String(userId) },
       });
       if (!response) return { success: false, message: "unable tp fetch data" };
       return {

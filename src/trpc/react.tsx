@@ -9,6 +9,7 @@ import SuperJSON from "superjson";
 
 import { type AppRouter } from "@/server/api/root";
 import { useStore } from "@/store/zustand";
+import { getCookie } from "@/utils/helpers";
 
 const createQueryClient = () => new QueryClient();
 
@@ -54,9 +55,10 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
           transformer: SuperJSON,
           url: getBaseUrl() + "/api/trpc",
           headers: () => {
+            const tokenFromCookie = getCookie("nekot-afcsv");
             const headers = new Headers();
             headers.set("x-trpc-source", "nextjs-react");
-            headers.set("Authorization", `Bearer ${token}`);
+            headers.set("Authorization", `Bearer ${token || tokenFromCookie}`);
             return headers;
           },
         }),

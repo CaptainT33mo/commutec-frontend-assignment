@@ -19,16 +19,14 @@ const mailSender = async ({ email, title, body }: MailSenderProps) => {
       },
     });
     // Send emails to users
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const info: nodemailer.SentMessageInfo = await transporter.sendMail({
       from: "Vibhor <i.am@vibhor.tech>",
       to: email,
       subject: title,
       html: body,
     });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return info;
-  } catch (error: any) {
+  } catch (error) {
     console.log(error);
   }
 };

@@ -53,11 +53,18 @@ export const authRouter = createTRPCRouter({
             code: "BAD_REQUEST",
           });
         }
+        const userId = saveUserDataResponse.id || user?.id;
+        if (!userId) {
+          throw new TRPCError({
+            message: "Something went wrong",
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
         const currentDateTime = new Date();
         const expiryDateTime = new Date(currentDateTime.getTime() + 10 * 60000);
         const saveUserOtp = await ctx.db.otpVerification.create({
           data: {
-            userId: saveUserDataResponse.id || user?.id,
+            userId,
             otp,
             expiresAt: expiryDateTime,
           },
@@ -176,8 +183,8 @@ const sendEmailNotification = async ({
     const mailResponse = await mailSender({
       email,
       title: "Very your email",
-      body: `<h1>Please use the OTP shown below to verify your email ${email}</h1>
-       <p>Code: ${otp}</p>`,
+      body: `<p>Please use the OTP shown below to verify your email ${email}</p>
+       <div>Code: <h3>${otp}</h3></div>`,
     });
     return mailResponse;
   } catch (error) {

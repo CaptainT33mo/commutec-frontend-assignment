@@ -29,7 +29,7 @@ export default function Login() {
   const loginUser = api.auth.login.useMutation({
     onSuccess: (resp) => {
       if (resp.success) {
-        updateToken(resp.data.accessToken);
+        resp?.data?.accessToken && updateToken(resp.data.accessToken);
         router.push(AppRoutes.DASHBOARD);
       }
     },
